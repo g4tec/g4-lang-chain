@@ -1,0 +1,29 @@
+endpoint: /prediction
+summary: Buscar resposta lang chain
+responses:
+  200:
+    description: Resposta obtida com sucesso
+    schema:
+      type: object
+      properties:
+        answer:
+          type: string
+
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      properties:
+        question:
+          type: string
+        overrideConfig:
+          type: object
+          properties:
+            weaviateIndex:
+              type: string
+      required:
+        - question
+

@@ -1,0 +1,14 @@
+.venv/
+env/
+*.zip
+curl-auth-with-keys.sh
+.env
+.vscode/
+app/modules/__pycache__/*
+app/modules/userCert/*
+userCert/*
+__pycache__/
+access.txt
+app/.DS_Store
+.DS_Store
+.DS_Store

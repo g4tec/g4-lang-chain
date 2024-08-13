@@ -1,0 +1,19 @@
+endpoint: /insert_file
+summary: Inserir arquivo weaviate
+responses:
+  200:
+    description: Resposta arquivo iserido com sucesso
+    schema:
+      type: object
+      properties:
+        data:
+          type: string
+
+
+parameters:
+  - in: formData
+    name: file
+    type: file
+    description: The file to be uploaded and processed
+    required: true
+

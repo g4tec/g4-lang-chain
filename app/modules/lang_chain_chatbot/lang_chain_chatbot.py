@@ -20,23 +20,30 @@ def run_bot_open_ai(docs, query):
 
 def run_bot_antropic(docs, query):
     llm = ChatAnthropic(
-    model="claude-3-5-sonnet-20240620",
-    temperature=0.9,
-    max_tokens=1024,
-    timeout=None,
-    max_retries=2,
+        model="claude-3-5-sonnet-20240620",
+        temperature=0.9,
+        max_tokens=1024,
+        timeout=None,
+        max_retries=2,
+        api_key=ANTHROPIC_API_KEY
     )
-    # Format the documents and the query
-    formatted_docs = format_documents(docs)
-    combined_input = f"Documents:\n{formatted_docs}\n\nQuery:\n{query}"
+    chain = load_qa_chain(llm, chain_type="stuff")
+
+    answer = chain.run(input_documents=docs, question=query)
     
-    # Invoke the model with the combined input
-    ai_msg = llm.invoke([combined_input])
-    
-    return ai_msg
+    return answer
 
 
-def format_documents(docs):
-    document_texts = [doc['content'] for doc in docs]
-    formatted_docs = "\n".join(document_texts)
-    return formatted_docs
+def stream_bot_antropic(docs, query):
+    llm = ChatAnthropic(
+        model="claude-3-5-sonnet-20240620",
+        temperature=0.9,
+        max_tokens=1024,
+        timeout=None,
+        max_retries=2,
+        api_key=ANTHROPIC_API_KEY
+    )
+    chain = load_qa_chain(llm, chain_type="stuff")
+
+    for token in chain.run(input_documents=docs, question=query, return_generator=True):
+        yield f"{token}"

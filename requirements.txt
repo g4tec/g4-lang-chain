@@ -29,3 +29,4 @@ unstructured
 unstructured[pdf]
 langchain-community
 langchain-anthropic
+flask-socketio

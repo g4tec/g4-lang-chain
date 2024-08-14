@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 import pdfplumber
+import json
 
 
 load_dotenv()
@@ -15,31 +16,27 @@ WEAVIATE_URL =  os.environ.get('WEAVIATE_URL')
 OPENAI_KEY =  os.environ.get('OPENAI_KEY')
 
 
-def add_docs(file):
+def add_docs(file, weaviateHost, weaviateIndex, metadata):
 
     with pdfplumber.open(file) as pdf:
         text_content = ""
         for page in pdf.pages:
             text_content += page.extract_text() or ""
     
-    filename = file.filename
-    documents = [Document(page_content=text_content, metadata={"filename": filename})]
+    metadata_dict = json.loads(metadata)
+    documents = [Document(page_content=text_content, metadata=metadata_dict)]
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     docs = text_splitter.split_documents(documents)
 
-    class_name = "ABDBBCBFFZZ"
-    # connect Weaviate Cluster
-    auth_config = weaviate.AuthApiKey(api_key=WEAVIATE_KEY)
+    class_name = weaviateIndex
 
     client = weaviate.Client(
-        url=WEAVIATE_URL,
+        url=f'http://{weaviateHost}',
         additional_headers={"X-OpenAI-Api-Key": OPENAI_KEY},
-        # auth_client_secret=auth_config,
         startup_period=10
     )
-    # define input structure
-    client.schema.delete_all()
+
 
     schema = {
         "classes": [
@@ -47,44 +44,55 @@ def add_docs(file):
                 "class": class_name,
                 "description": "Documents for chatbot",
                 "vectorizer": "text2vec-transformers",
-                # "moduleConfig": {"text2vec-openai": {"model": "ada", "type": "text"}},
-                # "properties": [
-                #     {
-                #         "dataType": ["text"],
-                #         "description": "The content of the paragraph",
-                #         "moduleConfig": {
-                #             "text2vec-openai": {
-                #                 "skip": False,
-                #                 "vectorizePropertyName": False,
-                #             }
-                #         },
-                #         "name": "text",
-                #     },
-                # ],
+                 "moduleConfig": {
+                    "text2vec-openai": {
+                        "model": "ada",
+                        "type": "text"
+                    }
+                },
+                "properties": [
+                    {
+                        "name": "content",
+                        "dataType": ["text"],
+                        "description": "The content of the document"
+                    },
+                    {
+                        "name": "filename",
+                        "dataType": ["text"],
+                        "description": "The name of the file from which the document was extracted"
+                    },
+                    {
+                        "name": "source",
+                        "dataType": ["text"],
+                        "description": "The source of the document"
+                    },
+                    {
+                        "name": "uuid",
+                        "dataType": ["text"],
+                        "description": "The uuid of the document"
+                    }
+                ]
             },
         ]
     }
     if not client.schema.exists(class_name):
         client.schema.create(schema)
 
+    vectorstore = Weaviate(client, class_name, "content", attributes=["filename", "source", "uuid"])
+    
+    vectorstore.add_documents(documents)
 
-    vectorstore = Weaviate(client, class_name, "text")
-
-    text_meta_pair = [(doc.page_content, doc.metadata) for doc in docs]
-    texts, meta = list(zip(*text_meta_pair))
-    vectorstore.add_texts(texts, meta)
     return vectorstore
 
-def get_docs(query, weaviateIndex):
-
-    auth_config = weaviate.AuthApiKey(api_key=WEAVIATE_KEY)
+def get_docs(query, weaviateIndex, weaviateHost):
 
     client = weaviate.Client(
-        url=WEAVIATE_URL,
+        url=weaviateHost,
         startup_period=10
     )
     
-    vectorstore = Weaviate(client, weaviateIndex, "text")
+    vectorstore = Weaviate(client, weaviateIndex, "content", attributes=["filename", "source", "uuid"])
+
 
     docs = vectorstore.similarity_search(query, k=4)
     return docs 

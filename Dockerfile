@@ -1,13 +1,13 @@
-FROM alpine:3.10
+FROM python:3.11-alpine
 
 LABEL maintainer "Roman Dodin <dodin.roman@gmail.com>"
-LABEL description "Payment Service multi tenet"
+LABEL description "Lang chain Service with Flask"
 
 # Copy python requirements file
 COPY requirements.txt /tmp/requirements.txt
 
+# Install necessary packages and build dependencies
 RUN apk add --no-cache \
-    python3 \
     bash \
     nginx \
     uwsgi \
@@ -21,11 +21,14 @@ RUN apk add --no-cache \
     openssl-dev && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    pip3 install -r /tmp/requirements.txt && \
-    rm /etc/nginx/conf.d/default.conf && \
-    rm -r /root/.cache
+    pip3 install --upgrade pip setuptools wheel
+    # rm /etc/nginx/conf.d/default.conf && \
+    # rm -r /root/.cache
 
+# Install specific version of opencv-python
+RUN pip3 install numpy
+RUN pip3 install opencv-python==4.8.0.74
+RUN pip3 install -r /tmp/requirements.txt 
 
 # Copy the Nginx global conf
 COPY nginx.conf /etc/nginx/

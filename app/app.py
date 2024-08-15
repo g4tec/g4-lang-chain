@@ -35,13 +35,14 @@ def handle_stream(data):
     question = data['question']
     overrideConfig = data['overrideConfig']
     weaviateIndex = overrideConfig['weaviateIndex']
+    sessionId = overrideConfig['sessionId']
     weaviateHost = f"http://{overrideConfig['weaviateHost']}"
     
     docs = weaviate.get_docs(question, weaviateIndex, weaviateHost)
 
     full_response = ''
 
-    for partial_response in lang_chain_chatbot.stream_bot_antropic(docs, question):
+    for partial_response in lang_chain_chatbot.stream_bot_antropic(docs, question, sessionId):
         emit('token', partial_response)
         full_response += partial_response
     sourceDocuments = []

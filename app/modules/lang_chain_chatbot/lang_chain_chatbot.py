@@ -78,7 +78,7 @@ def stream_bot_antropic(docs, query, session_id):
         for token in chain_with_history.stream(input_data, {"configurable": {"session_id": session_id}}):
             yield f"{token.content}"
     except Exception as e:
-        yield f"I couldn't answer your question 😞, can you try again?\nOr maybe you need a new account limit 🤗"
+        yield f"I couldn't answer your question 😞, can you try again?\nOr maybe you need a new account limit 🤗 {str(e)}"
 
 
 

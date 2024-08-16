@@ -10,9 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
 # Create a system user for nginx
-RUN adduser --system --no-create-home --shell /bin/false nginx && \
-    mkdir -p /var/log/nginx /var/log/uwsgi && \
-    chown -R nginx:nginx /var/log/nginx /var/log/uwsgi
+RUN adduser --system --no-create-home --shell /bin/false nginx
 
 # Install necessary packages and build dependencies
 RUN apt-get update && apt-get install -y \

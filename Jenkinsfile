@@ -5,7 +5,7 @@ node('master') {
     stage('Setup Network') {
             steps {
                 script {
-                    sh 'docker network ls | grep g4pay_redis_network || docker network create g4pay_redis_network'
+                    sh 'docker network ls | grep redis_network || docker network create redis_network'
                 }
             }
         }

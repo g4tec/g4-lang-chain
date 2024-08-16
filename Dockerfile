@@ -13,6 +13,11 @@ ENV TZ=Etc/UTC
 RUN groupadd --system nginx && \
     adduser --system --no-create-home --shell /bin/false --ingroup nginx nginx
 
+RUN groupadd --system uwsgi && \
+useradd --system --gid uwsgi --no-create-home --shell /bin/false uwsgi
+
+RUN chown -R uwsgi:uwsgi /app
+
 # Install necessary packages and build dependencies
 RUN apt-get update && apt-get install -y \
     tzdata \

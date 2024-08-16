@@ -27,3 +27,4 @@ unstructured[pdf]==0.15.1
 langchain-community==0.2.12
 langchain-anthropic==0.1.22
 flask-socketio==5.3.6
+eventlet

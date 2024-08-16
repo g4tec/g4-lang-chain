@@ -1,10 +1,11 @@
-from lang_chain_module import lang_chain_bp
-import os
-from flask import Flask, jsonify, request
-from flasgger import Swagger
-from dotenv import load_dotenv
-from flask_socketio import SocketIO
+import eventlet
+eventlet.monkey_patch()
 from flask_socketio import SocketIO, emit
+from flask import Flask, jsonify, request
+from dotenv import load_dotenv
+from flasgger import Swagger
+import os
+from lang_chain_module import lang_chain_bp
 from modules.weaviate import weaviate
 from modules.lang_chain_chatbot import lang_chain_chatbot
 
@@ -16,9 +17,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 server_port = os.environ.get('SERVER_PORT')
 
-
 app.register_blueprint(lang_chain_bp, url_prefix='/lang_chain')
-
 
 @socketio.on('connect')
 def handle_connect():
@@ -54,4 +53,4 @@ def handle_stream(data):
     emit('full_response',  {"text": full_response,"sourceDocuments":sourceDocuments})
 
 if __name__ == "__main__":
-    app.run(debug=True, port=server_port)
+    socketio.run(app, host="0.0.0.0", port=server_port, debug=True)

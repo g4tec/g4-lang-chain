@@ -76,4 +76,4 @@ EXPOSE 5010
 # Define environment variable
 ENV SERVER_PORT=5010
 
-CMD ["python", "app.py"]
+CMD ["python3", "app.py"]

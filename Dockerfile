@@ -70,6 +70,10 @@ RUN chown -R uwsgi:uwsgi /app
 
 WORKDIR /app
 
-EXPOSE 8989
+# Expose the port that Flask-SocketIO will use
+EXPOSE 5010
+
+# Define environment variable
+ENV SERVER_PORT=5010
 
 CMD ["/usr/bin/supervisord"]

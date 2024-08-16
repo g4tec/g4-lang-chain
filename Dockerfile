@@ -8,7 +8,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Set timezone to avoid tzdata prompt
 ENV TZ=Etc/UTC
-RUN adduser --system --no-create-home --shell /bin/false nginx
+
+# Create a system user for nginx
+RUN adduser --system --no-create-home --shell /bin/false nginx && \
+    mkdir -p /var/log/nginx /var/log/uwsgi && \
+    chown -R nginx:nginx /var/log/nginx /var/log/uwsgi
 
 # Install necessary packages and build dependencies
 RUN apt-get update && apt-get install -y \
@@ -40,7 +44,7 @@ RUN pip3 install numpy opencv-python && \
     pip3 install -r /tmp/requirements.txt
 
 # Copy the Nginx global conf
-COPY nginx.conf /etc/nginx/
+COPY nginx.conf /etc/nginx/nginx.conf
 # Copy the Flask Nginx site conf
 COPY flask-site-nginx.conf /etc/nginx/conf.d/
 # Copy the base uWSGI ini file to enable default dynamic uwsgi process number

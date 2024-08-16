@@ -1,9 +1,9 @@
 from langchain.chains.question_answering import load_qa_chain
-from langchain_community.llms import OpenAI
+from langchain.llms import OpenAI
 from langchain_anthropic import ChatAnthropic
 from dotenv import load_dotenv
 from langchain.memory import RedisChatMessageHistory
-from langchain_community.chat_message_histories import RedisChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 import os

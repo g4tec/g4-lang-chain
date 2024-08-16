@@ -26,7 +26,7 @@ node('master') {
             -e OPENAI_KEY='${OPENAI_KEY}' \
             -e ANTHROPIC_API_KEY='${ANTHROPIC_API_KEY}' \
             -e REDIS_HOST='${REDIS_HOST}' \
-            -p ${SERVER_PORT}:80 \
+            -p ${SERVER_PORT}:${SERVER_PORT} \
             ${PROJECT_NAME}:B${BUILD_NUMBER}"
     }
 }

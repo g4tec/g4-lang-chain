@@ -68,8 +68,6 @@ useradd --system --gid uwsgi --no-create-home --shell /bin/false uwsgi
 
 RUN chown -R uwsgi:uwsgi /app
 
-RUN chown nginx:nginx /tmp/uwsgi.sock
-RUN chmod 664 /tmp/uwsgi.sock
 
 WORKDIR /app
 

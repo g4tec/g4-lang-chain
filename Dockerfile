@@ -1,34 +1,42 @@
-FROM python:3.11-alpine
+FROM ubuntu:22.04
 
 LABEL maintainer "Roman Dodin <dodin.roman@gmail.com>"
 LABEL description "Lang chain Service with Flask"
 
-# Copy python requirements file
-COPY requirements.txt /tmp/requirements.txt
+# Set non-interactive mode for apt-get
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set timezone to avoid tzdata prompt
+ENV TZ=Etc/UTC
 
 # Install necessary packages and build dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
+    tzdata \
     bash \
     nginx \
     uwsgi \
-    uwsgi-python3 \
+    uwsgi-plugin-python3 \
     supervisor \
     libffi-dev \
     gcc \
-    musl-dev \
     make \
     python3-dev \
-    openssl-dev && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools wheel
-    # rm /etc/nginx/conf.d/default.conf && \
-    # rm -r /root/.cache
+    python3-pip \
+    openssl \
+    build-essential \
+    cmake \
+    libopencv-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install specific version of opencv-python
-RUN pip3 install numpy
-RUN pip3 install opencv-python==4.8.0.74
-RUN pip3 install -r /tmp/requirements.txt 
+# Upgrade pip and install necessary Python packages
+RUN pip3 install --upgrade pip setuptools wheel
+
+# Copy python requirements file
+COPY requirements.txt /tmp/requirements.txt
+
+# Install Python packages
+RUN pip3 install numpy opencv-python && \
+    pip3 install -r /tmp/requirements.txt
 
 # Copy the Nginx global conf
 COPY nginx.conf /etc/nginx/

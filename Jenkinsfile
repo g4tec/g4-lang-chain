@@ -13,8 +13,6 @@ node('master') {
         }
         sh "docker service create --replicas ${REPLICAS} \
         --network g4pay_redis_network \
-        -e WEAVIATE_KEY='${WEAVIATE_KEY}' \
-        -e WEAVIATE_URL='${WEAVIATE_URL}' \
         -e OPENAI_KEY='${OPENAI_KEY}' \
         -e ANTHROPIC_API_KEY='${ANTHROPIC_API_KEY}' \
         -e REDIS_HOST='${REDIS_HOST}' \

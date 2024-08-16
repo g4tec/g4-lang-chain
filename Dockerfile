@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Set timezone to avoid tzdata prompt
 ENV TZ=Etc/UTC
+RUN adduser --system --no-create-home --shell /bin/false nginx
 
 # Install necessary packages and build dependencies
 RUN apt-get update && apt-get install -y \

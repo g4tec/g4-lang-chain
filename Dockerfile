@@ -71,5 +71,6 @@ RUN chown -R uwsgi:uwsgi /app
 
 WORKDIR /app
 
+EXPOSE 8989
 
 CMD ["/usr/bin/supervisord"]

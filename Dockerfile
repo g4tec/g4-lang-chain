@@ -30,11 +30,16 @@ RUN apt-get update && apt-get install -y \
     libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
 
+
+
 # Upgrade pip and install necessary Python packages
 RUN pip3 install --upgrade pip setuptools wheel
 
 # Copy python requirements file
 COPY requirements.txt /tmp/requirements.txt
+
+RUN apt-get install -y uwsgi-plugin-python3
+
 
 # Install Python packages
 RUN pip3 install numpy opencv-python && \

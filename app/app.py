@@ -53,4 +53,13 @@ def handle_stream(data):
     emit('full_response',  {"text": full_response,"sourceDocuments":sourceDocuments})
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=server_port, debug=True)
+    import eventlet
+    import eventlet.wsgi
+    from flask_socketio import SocketIO
+
+    # Ensure eventlet is being used
+    eventlet.monkey_patch()
+    socketio = SocketIO(app, async_mode='eventlet')
+
+    # Run the app with eventlet
+    socketio.run(app, host="0.0.0.0", port=int(server_port), debug=True)

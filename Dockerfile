@@ -76,4 +76,4 @@ EXPOSE 5010
 # Define environment variable
 ENV SERVER_PORT=5010
 
-CMD ["/usr/bin/supervisord"]
+CMD ["python", "app.py"]

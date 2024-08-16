@@ -22,12 +22,10 @@ node('master') {
         
         sh "docker run -d \
             --name ${PROJECT_NAME} \
-            --network redis_network \
             -e OPENAI_KEY='${OPENAI_KEY}' \
             -e ANTHROPIC_API_KEY='${ANTHROPIC_API_KEY}' \
             -e REDIS_HOST='${REDIS_HOST}' \
-            --hostname lang_chain_service \
-            -p ${SERVER_PORT}:${SERVER_PORT} \
+            -p ${SERVER_PORT}:$80 \
             ${PROJECT_NAME}:B${BUILD_NUMBER}"
     }
 }

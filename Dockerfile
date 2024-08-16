@@ -9,14 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Set timezone to avoid tzdata prompt
 ENV TZ=Etc/UTC
 
-# Add nginx group
-RUN groupadd --system nginx && \
-    adduser --system --no-create-home --shell /bin/false --ingroup nginx nginx
 
-RUN groupadd --system uwsgi && \
-useradd --system --gid uwsgi --no-create-home --shell /bin/false uwsgi
-
-RUN chown -R uwsgi:uwsgi /app
 
 # Install necessary packages and build dependencies
 RUN apt-get update && apt-get install -y \
@@ -58,6 +51,16 @@ COPY supervisord.conf /etc/supervisord.conf
 
 # Add demo app
 COPY ./app /app
+
+# Add nginx group
+RUN groupadd --system nginx && \
+    adduser --system --no-create-home --shell /bin/false --ingroup nginx nginx
+
+RUN groupadd --system uwsgi && \
+useradd --system --gid uwsgi --no-create-home --shell /bin/false uwsgi
+
+RUN chown -R uwsgi:uwsgi /app
+
 WORKDIR /app
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

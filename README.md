@@ -1,1 +1,0 @@
-# sicoob-payment-service
